@@ -1,12 +1,24 @@
 FROM python:3.10.8-slim-buster
 
-RUN apt-get update && apt-get upgrade -y
-RUN apt install git -y
-COPY requirements.txt /requirements.txt
+# Use non-interactive frontend for apt
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN cd /
-RUN pip3 install -U pip && pip3 install -U -r requirements.txt
-RUN mkdir /VJ-Forward-Bot
+# Update system and install dependencies
+RUN apt-get update && \
+    apt-get install -y git gcc && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set working directory
 WORKDIR /VJ-Forward-Bot
-COPY . /VJ-Forward-Bot
-CMD gunicorn app:app & python3 main.py
+
+# Copy requirements and install
+COPY requirements.txt .
+
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+# Copy rest of the project
+COPY . .
+
+# Start the bot
+CMD ["python3", "main.py"]
