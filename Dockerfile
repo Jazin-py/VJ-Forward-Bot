@@ -1,23 +1,23 @@
 FROM python:3.10.8-slim-buster
 
-# Use non-interactive frontend for apt
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Update system and install dependencies
-RUN apt-get update && \
+# 🔁 Change source to archived buster repo
+RUN sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list && \
+    sed -i 's|security.debian.org|archive.debian.org|g' /etc/apt/sources.list && \
+    apt-get update && \
     apt-get install -y git gcc && \
     rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /VJ-Forward-Bot
 
-# Copy requirements and install
+# Install Python dependencies
 COPY requirements.txt .
-
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-# Copy rest of the project
+# Copy all files
 COPY . .
 
 # Start the bot
