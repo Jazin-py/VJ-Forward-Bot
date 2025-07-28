@@ -1,12 +1,14 @@
-FROM python:3.10.8-slim-buster
+FROM python:3.10.8-slim-bookworm
 
-RUN apt-get update && apt-get upgrade -y
-RUN apt install git -y
+Avoid interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt update && apt upgrade -y && apt install -y git
+
 COPY requirements.txt /requirements.txt
+RUN pip install --no-cache-dir -r /requirements.txt
 
-RUN cd /
-RUN pip3 install -U pip && pip3 install -U -r requirements.txt
-RUN mkdir /VJ-Forward-Bot
-WORKDIR /VJ-Forward-Bot
-COPY . /VJ-Forward-Bot
-CMD gunicorn app:app & python3 main.py
+COPY . /app
+WORKDIR /app
+
+CMD ["python", "bot.py"]
