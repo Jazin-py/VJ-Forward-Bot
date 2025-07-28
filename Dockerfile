@@ -1,6 +1,6 @@
 FROM python:3.10.8-slim-bookworm
 
-Avoid interactive prompts
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt update && apt upgrade -y && apt install -y git
